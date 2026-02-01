@@ -15,6 +15,16 @@ export default function DoctorProfile() {
   const [appointmentsLoading, setAppointmentsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [approvalStatus, setApprovalStatus] = useState<string>('pending');
+  const [rejectionReason, setRejectionReason] = useState<string>('');
+  const [updatingApproval, setUpdatingApproval] = useState(false);
+
+  useEffect(() => {
+    if (doctor) {
+      setApprovalStatus(doctor.approval_status || 'pending');
+      setRejectionReason(doctor.rejection_reason || '');
+    }
+  }, [doctor]);
 
   useEffect(() => {
     if (id) {
@@ -44,6 +54,28 @@ export default function DoctorProfile() {
       console.error('Error fetching doctor appointments:', error);
     } finally {
       setAppointmentsLoading(false);
+    }
+  };
+
+  const handleUpdateApprovalStatus = async () => {
+    if (!id) return;
+    setUpdatingApproval(true);
+    try {
+      const payload: Partial<typeof doctor> = {
+        approval_status: approvalStatus as 'pending' | 'approved' | 'rejected',
+      };
+      if (approvalStatus === 'rejected' && rejectionReason.trim()) {
+        payload.rejection_reason = rejectionReason.trim();
+      } else if (approvalStatus !== 'rejected') {
+        payload.rejection_reason = null;
+      }
+      await api.doctors.update(id, payload);
+      setDoctor((prev) => prev ? { ...prev, ...payload } : null);
+    } catch (error) {
+      console.error('Error updating approval status:', error);
+      alert('Failed to update approval status');
+    } finally {
+      setUpdatingApproval(false);
     }
   };
 
@@ -171,6 +203,62 @@ export default function DoctorProfile() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Approval Status */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+            Approval Status
+          </h3>
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+            <div className="flex-1 max-w-xs">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
+              <select
+                value={approvalStatus}
+                onChange={(e) => setApprovalStatus(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#204FCF] focus:border-[#204FCF]"
+              >
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            {approvalStatus === 'rejected' && (
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Rejection Reason (optional)
+                </label>
+                <input
+                  type="text"
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  placeholder="Reason for rejection"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#204FCF] focus:border-[#204FCF]"
+                />
+              </div>
+            )}
+            <button
+              onClick={handleUpdateApprovalStatus}
+              disabled={updatingApproval}
+              className="px-4 py-2 bg-[#204FCF] text-white rounded-lg hover:bg-[#1a3fa6] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {updatingApproval ? 'Updating...' : 'Update Status'}
+            </button>
+          </div>
+          <div className="mt-3">
+            <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full ${
+              approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+              approvalStatus === 'rejected' ? 'bg-red-100 text-red-800' :
+              'bg-yellow-100 text-yellow-800'
+            }`}>
+              {approvalStatus === 'approved' && <CheckCircle className="w-3 h-3" />}
+              {approvalStatus === 'rejected' && <XCircle className="w-3 h-3" />}
+              {approvalStatus === 'pending' && <AlertCircle className="w-3 h-3" />}
+              Current: {approvalStatus.charAt(0).toUpperCase() + approvalStatus.slice(1)}
+            </span>
           </div>
         </div>
 

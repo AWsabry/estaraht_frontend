@@ -70,6 +70,16 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
+    // Mobile: request reset, returns uid + resetLink for email
+    requestPasswordReset: (email: string) => apiFetch('/auth/request-reset', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+    // Web form: set new password using uid from link
+    resetPassword: (uid: string, newPassword: string, confirmPassword: string) => apiFetch('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ uid, newPassword, confirmPassword }),
+    }),
   },
 
   // Doctors
@@ -245,6 +255,8 @@ export type Doctor = {
   number_review: number | null;
   wallet: number | null;
   updated_at: string;
+  approval_status?: 'pending' | 'approved' | 'rejected' | null;
+  rejection_reason?: string | null;
 };
 
 export type Patient = {
