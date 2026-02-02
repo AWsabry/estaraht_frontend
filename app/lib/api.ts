@@ -75,7 +75,7 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ email }),
     }),
-    // Web form: set new password using uid from link
+    // Web form: set new password (uid from URL + password in body)
     resetPassword: (uid: string, newPassword: string, confirmPassword: string) => apiFetch('/auth/reset-password', {
       method: 'POST',
       body: JSON.stringify({ uid, newPassword, confirmPassword }),
