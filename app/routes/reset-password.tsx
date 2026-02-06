@@ -78,12 +78,6 @@ export default function ResetPassword() {
             <p className="text-gray-600 mb-6">
               Your password has been updated. You can now sign in with your new password.
             </p>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#204FCF] text-white rounded-lg hover:bg-[#1a3fa6] transition-colors"
-            >
-              Sign In
-            </Link>
           </div>
         </div>
       </div>

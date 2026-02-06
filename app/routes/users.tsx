@@ -262,12 +262,14 @@ export default function Users() {
                           <button className="text-[#204FCF] hover:text-[#1a3fa6]">
                             <Edit className="w-5 h-5" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(user.user_id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
+                          {user.role?.toLowerCase() !== 'admin' && (
+                            <button
+                              onClick={() => handleDelete(user.user_id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

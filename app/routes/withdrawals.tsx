@@ -79,6 +79,12 @@ export default function Withdrawals() {
     return sum + amount;
   }, 0);
 
+  const totalAmountMRU = filteredWithdrawals.reduce((sum, w) => {
+    const val = w.total_amount_in_MRU;
+    const amount = typeof val === 'number' ? val : parseFloat(String(val || '0')) || 0;
+    return sum + amount;
+  }, 0);
+
   const successfulWithdrawals = filteredWithdrawals.filter(w => w.operation_status === 'success');
   const pendingWithdrawals = filteredWithdrawals.filter(w => w.operation_status === 'pending');
   const failedWithdrawals = filteredWithdrawals.filter(w => w.operation_status === 'failed');
@@ -220,6 +226,17 @@ export default function Withdrawals() {
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="flex items-center justify-between">
               <div>
+                <p className="text-sm text-gray-600">Total Amount (MRU)</p>
+                <p className="text-2xl font-bold text-gray-900">{totalAmountMRU.toFixed(0)}</p>
+              </div>
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-amber-600" />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-gray-600">Successful</p>
                 <p className="text-2xl font-bold text-gray-900">{successfulWithdrawals.length}</p>
               </div>
@@ -295,6 +312,9 @@ export default function Withdrawals() {
                       Actual Amount
                     </th>
                     <th className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>
+                      Amount (MRU)
+                    </th>
+                    <th className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>
                       Income History
                     </th>
                     <th className={`px-3 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>
@@ -317,7 +337,7 @@ export default function Withdrawals() {
                 <tbody className="divide-y divide-gray-200">
                   {filteredWithdrawals.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={11} className="px-6 py-8 text-center text-gray-500">
                         No withdrawals found
                       </td>
                     </tr>
@@ -350,6 +370,13 @@ export default function Withdrawals() {
                         <td className={`px-3 py-3 whitespace-nowrap ${isRTL ? 'text-right' : 'text-left'}`}>
                           <div className="text-xs font-semibold text-gray-900">
                             {withdrawal.total_actual_amount || '-'}
+                          </div>
+                        </td>
+                        <td className={`px-3 py-3 whitespace-nowrap ${isRTL ? 'text-right' : 'text-left'}`}>
+                          <div className="text-xs font-semibold text-gray-900">
+                            {withdrawal.total_amount_in_MRU != null && withdrawal.total_amount_in_MRU !== ''
+                              ? String(withdrawal.total_amount_in_MRU)
+                              : '-'}
                           </div>
                         </td>
                         <td className={`px-3 py-3 whitespace-nowrap ${isRTL ? 'text-right' : 'text-left'}`}>
@@ -532,6 +559,14 @@ export default function Withdrawals() {
                         <div>
                           <p className="text-xs text-gray-600">Total Actual Amount</p>
                           <p className="text-sm font-semibold text-gray-900">{selectedWithdrawal.total_actual_amount || '-'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-600">Total Amount (MRU)</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {selectedWithdrawal.total_amount_in_MRU != null && selectedWithdrawal.total_amount_in_MRU !== ''
+                              ? String(selectedWithdrawal.total_amount_in_MRU)
+                              : '-'}
+                          </p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-600">Income History</p>

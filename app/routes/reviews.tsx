@@ -157,10 +157,10 @@ export default function Reviews() {
                       {t('reviews.bookingId')}
                     </th>
                     <th className={`px-6 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>
-                      {t('reviews.patientId')}
+                      {t('reviews.patientEmail')}
                     </th>
                     <th className={`px-6 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>
-                      {t('reviews.doctorId')}
+                      {t('reviews.doctorEmail')}
                     </th>
                     <th className={`px-6 py-3 ${isRTL ? 'text-right' : 'text-left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>
                       {t('reviews.rating')}
@@ -198,12 +198,12 @@ export default function Reviews() {
                         </td>
                         <td className={`px-6 py-4 whitespace-nowrap ${isRTL ? 'text-right' : 'text-left'}`}>
                           <div className="text-sm text-gray-900">
-                            {review.patient_id ? review.patient_id.substring(0, 8) + '...' : t('users.notAvailable')}
+                            {review.patients?.email || review.patient_id || t('users.notAvailable')}
                           </div>
                         </td>
                         <td className={`px-6 py-4 whitespace-nowrap ${isRTL ? 'text-right' : 'text-left'}`}>
                           <div className="text-sm text-gray-900">
-                            {review.doctor_id ? review.doctor_id.substring(0, 8) + '...' : t('users.notAvailable')}
+                            {review.doctors?.email || review.doctor_id || t('users.notAvailable')}
                           </div>
                         </td>
                         <td className={`px-6 py-4 whitespace-nowrap ${isRTL ? 'text-right' : 'text-left'}`}>

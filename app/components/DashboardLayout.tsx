@@ -6,7 +6,6 @@ import {
   UserCog,
   Stethoscope,
   UserRound,
-  CreditCard,
   Ticket,
   Menu,
   X,
@@ -17,6 +16,8 @@ import {
   Globe,
   ChevronDown,
   Wallet,
+  FileText,
+  ClipboardList,
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import logoImage from '../assets/Images/logo.png';
@@ -33,7 +34,8 @@ const menuItems: MenuItem[] = [
   { nameKey: 'nav.doctors', path: '/doctors', icon: Stethoscope },
   { nameKey: 'nav.patients', path: '/patients', icon: UserRound },
   { nameKey: 'nav.bookings', path: '/bookings', icon: Calendar },
-  { nameKey: 'nav.transactions', path: '/transactions', icon: CreditCard },
+  { nameKey: 'nav.paymentPlans', path: '/payment-plans', icon: FileText },
+  { nameKey: 'nav.patientPlanSubscriptions', path: '/patient-plan-subscriptions', icon: ClipboardList },
   { nameKey: 'nav.withdrawals', path: '/withdrawals', icon: Wallet },
   { nameKey: 'nav.coupons', path: '/coupons', icon: Ticket },
   { nameKey: 'nav.reviews', path: '/reviews', icon: Star },

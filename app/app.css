@@ -134,17 +134,21 @@ form select option {
   padding: 0.5rem;
 }
 
-/* Ensure form inputs maintain proper styling in modals */
+/* Ensure form inputs and textareas maintain proper styling in modals */
 .bg-white input[type="date"],
 .bg-white input[type="time"],
 .bg-white input[type="text"],
 .bg-white input[type="email"],
 .bg-white input[type="password"],
+.bg-white input[type="number"],
+.bg-white textarea,
 form input[type="date"],
 form input[type="time"],
 form input[type="text"],
 form input[type="email"],
-form input[type="password"] {
+form input[type="password"],
+form input[type="number"],
+form textarea {
   background-color: white;
   color: #111827;
 }

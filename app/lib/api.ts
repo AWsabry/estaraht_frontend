@@ -130,13 +130,38 @@ export const api = {
     getStats: () => apiFetch('/users/stats'),
   },
 
-  // Transactions
-  transactions: {
-    getAll: () => apiFetch('/transactions'),
-    getById: (id: string) => apiFetch(`/transactions/${id}`),
-    getByDoctor: (doctorId: string) => apiFetch(`/transactions/doctor/${doctorId}`),
-    getByPatient: (patientId: string) => apiFetch(`/transactions/patient/${patientId}`),
-    getStats: () => apiFetch('/transactions/stats'),
+  // Payment plans
+  paymentPlans: {
+    getAll: () => apiFetch('/payment-plans'),
+    getById: (id: string) => apiFetch(`/payment-plans/${id}`),
+    create: (data: Partial<PaymentPlan>) => apiFetch('/payment-plans', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    update: (id: string, data: Partial<PaymentPlan>) => apiFetch(`/payment-plans/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    delete: (id: string) => apiFetch(`/payment-plans/${id}`, { method: 'DELETE' }),
+    getStats: () => apiFetch('/payment-plans/stats'),
+  },
+
+  // Patient plan subscriptions
+  patientPlanSubscriptions: {
+    getAll: () => apiFetch('/patient-plan-subscriptions'),
+    getById: (id: string) => apiFetch(`/patient-plan-subscriptions/${id}`),
+    getByPatient: (patientId: string) => apiFetch(`/patient-plan-subscriptions/patient/${patientId}`),
+    getByPlan: (planId: string) => apiFetch(`/patient-plan-subscriptions/plan/${planId}`),
+    create: (data: Partial<PatientPlanSubscription>) => apiFetch('/patient-plan-subscriptions', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    update: (id: string, data: Partial<PatientPlanSubscription>) => apiFetch(`/patient-plan-subscriptions/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    delete: (id: string) => apiFetch(`/patient-plan-subscriptions/${id}`, { method: 'DELETE' }),
+    getStats: () => apiFetch('/patient-plan-subscriptions/stats'),
   },
 
   // Coupons
@@ -248,12 +273,14 @@ export type Doctor = {
   years_of_exp: number | null;
   numb_patients: number | null;
   profile_img_url: string | null;
-  booking_price: number | null;
+  doctor_fee_per_session: number | null;
   fcm_token: string | null;
-  avg_rating: number | null;
+  average_rating: number | null;
   numb_session: number | null;
   number_review: number | null;
+  total_reviews?: number | null;
   wallet: number | null;
+  timezone_offset_hours: number | null;
   updated_at: string;
   approval_status?: 'pending' | 'approved' | 'rejected' | null;
   rejection_reason?: string | null;
@@ -273,15 +300,47 @@ export type Patient = {
   profile_img_url: string | null;
 };
 
-export type Transaction = {
+export type PaymentPlan = {
   id: string;
-  booking_id: string | null;
-  operation_id: string;
+  plan_name: string;
+  plan_name_ar?: string | null;
+  plan_name_fr?: string | null;
+  description?: string | null;
+  description_ar?: string | null;
+  description_fr?: string | null;
+  price: number;
+  payment_currency?: string | null;
+  sessions: number;
+  is_first_time_only?: boolean;
+  is_active?: boolean;
+  sort_order?: number;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type PatientPlanSubscription = {
+  id: string;
   patient_id: string;
-  doctor_id: string;
-  operation_status: string;
-  amount: number;
-  created_at: string;
+  plan_id: string;
+  payment_id?: string | null;
+  sessions_purchased: number;
+  sessions_used?: number;
+  price_paid: number;
+  payment_gateway?: string | null;
+  payment_currency?: string | null;
+  payment_status?: string | null;
+  subscribed_at?: string;
+  created_at?: string;
+  expires_at?: string | null;
+  status: string;
+  patients?: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    phone: string | null;
+    profile_img_url?: string | null;
+  };
+  payment_plans?: PaymentPlan;
 };
 
 export type Coupon = {
@@ -342,6 +401,8 @@ export type Review = {
   rating: string;
   comment: string;
   created_at: string;
+  patients?: { id: string; email: string | null; name: string | null };
+  doctors?: { doctor_id: string; email: string | null; full_name: string | null };
 };
 
 export type Withdrawal = {
@@ -350,6 +411,7 @@ export type Withdrawal = {
   doctor_id: string | null;
   total_amount: string | null;
   total_actual_amount: string | null;
+  total_amount_in_MRU?: string | number | null;
   withrowl_history: string | null;
   income_history: number | null;
   action_type: string | null;

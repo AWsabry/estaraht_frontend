@@ -22,7 +22,7 @@ export default function Doctors() {
     specialization: '',
     bio: '',
     years_of_exp: '',
-    booking_price: '',
+    doctor_fee_per_session: '',
     profile_img_url: '',
   });
 
@@ -76,9 +76,9 @@ export default function Doctors() {
         specialization: formData.specialization || null,
         bio: formData.bio || null,
         years_of_exp: formData.years_of_exp ? parseInt(formData.years_of_exp) : null,
-        booking_price: formData.booking_price ? parseFloat(formData.booking_price) : null,
+        doctor_fee_per_session: formData.doctor_fee_per_session ? parseFloat(formData.doctor_fee_per_session) : null,
         profile_img_url: formData.profile_img_url || null,
-        avg_rating: null,
+        average_rating: null,
         numb_session: 0,
         number_review: 0,
         numb_patients: 0,
@@ -95,7 +95,7 @@ export default function Doctors() {
         specialization: '',
         bio: '',
         years_of_exp: '',
-        booking_price: '',
+        doctor_fee_per_session: '',
         profile_img_url: '',
       });
       fetchDoctors();
@@ -155,7 +155,7 @@ export default function Doctors() {
               <p className="text-sm text-gray-600">{t('doctors.avgRating')}</p>
               <p className="text-2xl font-bold text-gray-900">
                 {(
-                  doctors.reduce((acc, d) => acc + (d.avg_rating || 0), 0) / doctors.length || 0
+                  doctors.reduce((acc, d) => acc + (d.average_rating || 0), 0) / doctors.length || 0
                 ).toFixed(1)}
               </p>
             </div>
@@ -313,7 +313,7 @@ export default function Doctors() {
                         <div className="flex items-center gap-1">
                           <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                           <span className="text-sm font-medium">
-                            {doctor.avg_rating?.toFixed(1) || '0.0'}
+                            {doctor.average_rating?.toFixed(1) || '0.0'}
                           </span>
                           <span className="text-xs text-gray-500">
                             ({doctor.number_review || 0})
@@ -498,14 +498,14 @@ export default function Doctors() {
 
                 <div>
                   <label className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : ''}`}>
-                    {t('doctors.bookingPrice')}
+                    Fee Per Session
                   </label>
                   <input
                     type="number"
                     min="0"
                     step="0.01"
-                    value={formData.booking_price}
-                    onChange={(e) => setFormData({ ...formData, booking_price: e.target.value })}
+                    value={formData.doctor_fee_per_session}
+                    onChange={(e) => setFormData({ ...formData, doctor_fee_per_session: e.target.value })}
                     className={`w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#204FCF] focus:border-[#204FCF] ${isRTL ? 'text-right' : ''}`}
                     placeholder="100.00"
                   />

@@ -255,30 +255,6 @@ export default function PatientProfile() {
                   <User className="w-4 h-4 text-gray-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Profile Image URL</p>
-                  <p className="text-sm font-medium text-gray-900 break-all">
-                    {patient.profile_img_url || 'N/A'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <User className="w-4 h-4 text-gray-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">FCM Token</p>
-                  <p className="text-sm font-medium text-gray-900 break-all">
-                    {patient.fcm_token || 'N/A'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <User className="w-4 h-4 text-gray-600" />
-                </div>
-                <div className="flex-1">
                   <p className="text-xs text-gray-500 uppercase tracking-wide">Login ID</p>
                   <p className="text-sm font-medium text-gray-900">{patient.login_id || 'N/A'}</p>
                 </div>

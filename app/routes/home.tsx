@@ -4,7 +4,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { useLanguage } from '../contexts/LanguageContext';
 import { api } from '../lib/api';
-import { Users, Stethoscope, UserRound, CreditCard, Ticket, TrendingUp } from 'lucide-react';
+import { Users, Stethoscope, UserRound, Ticket, FileText, ClipboardList } from 'lucide-react';
 import { Link } from 'react-router';
 
 export function meta({}: Route.MetaArgs) {
@@ -20,9 +20,9 @@ export default function Home() {
     totalUsers: 0,
     totalDoctors: 0,
     totalPatients: 0,
-    totalTransactions: 0,
     activeCoupons: 0,
-    totalRevenue: 0,
+    totalPlans: 0,
+    activeSubscriptions: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -33,21 +33,22 @@ export default function Home() {
   const fetchDashboardStats = async () => {
     setLoading(true);
     try {
-      const [usersRes, doctorsRes, patientsRes, txnsRes, couponsRes] = await Promise.all([
+      const [usersRes, doctorsRes, patientsRes, couponsRes, plansRes, subsRes] = await Promise.all([
         api.users.getStats(),
         api.doctors.getStats(),
         api.patients.getStats(),
-        api.transactions.getStats(),
         api.coupons.getStats(),
+        api.paymentPlans.getStats(),
+        api.patientPlanSubscriptions.getStats(),
       ]);
 
       setStats({
         totalUsers: (usersRes as any).data?.totalUsers || 0,
         totalDoctors: (doctorsRes as any).data?.totalDoctors || 0,
         totalPatients: (patientsRes as any).data?.totalPatients || 0,
-        totalTransactions: (txnsRes as any).data?.totalTransactions || 0,
         activeCoupons: (couponsRes as any).data?.activeCoupons || 0,
-        totalRevenue: (txnsRes as any).data?.totalAmount || 0,
+        totalPlans: (plansRes as any).data?.totalPlans || 0,
+        activeSubscriptions: (subsRes as any).data?.activeSubscriptions || 0,
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -79,11 +80,11 @@ export default function Home() {
       link: '/patients',
     },
     {
-      title: t('dashboard.transactions'),
-      value: stats.totalTransactions,
-      icon: CreditCard,
+      title: t('nav.paymentPlans'),
+      value: stats.totalPlans,
+      icon: FileText,
       color: 'bg-orange-100 text-orange-600',
-      link: '/transactions',
+      link: '/payment-plans',
     },
     {
       title: t('dashboard.activeCoupons'),
@@ -93,11 +94,11 @@ export default function Home() {
       link: '/coupons',
     },
     {
-      title: t('dashboard.totalRevenue'),
-      value: `$${stats.totalRevenue.toFixed(2)}`,
-      icon: TrendingUp,
+      title: t('nav.patientPlanSubscriptions'),
+      value: stats.activeSubscriptions,
+      icon: ClipboardList,
       color: 'bg-yellow-100 text-yellow-600',
-      link: '/transactions',
+      link: '/patient-plan-subscriptions',
     },
   ];
 
@@ -180,15 +181,27 @@ export default function Home() {
               </div>
             </Link>
             <Link
-              to="/transactions"
+              to="/payment-plans"
               className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-orange-600" />
+                <FileText className="w-5 h-5 text-orange-600" />
               </div>
               <div>
-                <p className="font-semibold text-gray-900">{t('dashboard.viewTransactions')}</p>
-                <p className="text-sm text-gray-500">{t('dashboard.viewTransactions')}</p>
+                <p className="font-semibold text-gray-900">{t('nav.paymentPlans')}</p>
+                <p className="text-sm text-gray-500">{t('nav.paymentPlans')}</p>
+              </div>
+            </Link>
+            <Link
+              to="/patient-plan-subscriptions"
+              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                <ClipboardList className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">{t('nav.patientPlanSubscriptions')}</p>
+                <p className="text-sm text-gray-500">{t('nav.patientPlanSubscriptions')}</p>
               </div>
             </Link>
             <Link

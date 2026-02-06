@@ -11,6 +11,7 @@ export default function DoctorProfile() {
   const { id } = useParams<{ id: string }>();
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [appointments, setAppointments] = useState<Bookings[]>([]);
+  const [doctorReviews, setDoctorReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [appointmentsLoading, setAppointmentsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,6 +31,7 @@ export default function DoctorProfile() {
     if (id) {
       fetchDoctorDetails();
       fetchDoctorAppointments();
+      fetchDoctorReviews();
     }
   }, [id]);
 
@@ -54,6 +56,15 @@ export default function DoctorProfile() {
       console.error('Error fetching doctor appointments:', error);
     } finally {
       setAppointmentsLoading(false);
+    }
+  };
+
+  const fetchDoctorReviews = async () => {
+    try {
+      const response: any = await api.reviews.getByDoctor(id!);
+      setDoctorReviews(response.data || []);
+    } catch (error) {
+      console.error('Error fetching doctor reviews:', error);
     }
   };
 
@@ -141,6 +152,7 @@ export default function DoctorProfile() {
   const confirmedCount = appointments.filter(a => a.status === 'confirmed').length;
   const completedCount = appointments.filter(a => a.status === 'completed').length;
   const cancelledCount = appointments.filter(a => a.status === 'cancelled').length;
+  const reviewsCount = doctorReviews.length;
 
   return (
     <DashboardLayout>
@@ -182,11 +194,11 @@ export default function DoctorProfile() {
                 </p>
               )}
               <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
-                {doctor.avg_rating !== null && (
+                {doctor.average_rating !== null && doctor.average_rating !== undefined && (
                   <div className="flex items-center gap-1">
                     <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                    <span className="font-medium text-lg">{doctor.avg_rating.toFixed(1)}</span>
-                    <span className="text-gray-500">({doctor.number_review || 0} reviews)</span>
+                    <span className="font-medium text-lg">{doctor.average_rating.toFixed(1)}</span>
+                    <span className="text-gray-500">({reviewsCount} reviews)</span>
                   </div>
                 )}
                 {doctor.years_of_exp !== null && (
@@ -195,10 +207,16 @@ export default function DoctorProfile() {
                     <span>{doctor.years_of_exp} years experience</span>
                   </div>
                 )}
-                {doctor.booking_price !== null && (
+                {doctor.doctor_fee_per_session !== null && doctor.doctor_fee_per_session !== undefined && (
                   <div className="flex items-center gap-1">
                     <DollarSign className="w-5 h-5" />
-                    <span>${doctor.booking_price.toFixed(2)} per session</span>
+                    <span>${doctor.doctor_fee_per_session.toFixed(2)} per session</span>
+                  </div>
+                )}
+                {doctor.timezone_offset_hours !== null && doctor.timezone_offset_hours !== undefined && (
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-5 h-5 text-blue-600" />
+                    <span>UTC {doctor.timezone_offset_hours >= 0 ? `+${doctor.timezone_offset_hours}` : doctor.timezone_offset_hours}</span>
                   </div>
                 )}
               </div>
@@ -353,22 +371,16 @@ export default function DoctorProfile() {
                   <DollarSign className="w-4 h-4 text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Booking Price</p>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Fee Per Session</p>
                   <p className="text-sm font-medium text-gray-900">
-                    {doctor.booking_price !== null ? `$${doctor.booking_price.toFixed(2)}` : 'N/A'}
+                    {doctor.doctor_fee_per_session !== null && doctor.doctor_fee_per_session !== undefined 
+                      ? `$${doctor.doctor_fee_per_session.toFixed(2)}` 
+                      : 'N/A'}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Users className="w-4 h-4 text-purple-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide">Number of Patients</p>
-                  <p className="text-sm font-medium text-gray-900">{doctor.numb_patients || 0}</p>
-                </div>
-              </div>
+    
 
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -376,7 +388,7 @@ export default function DoctorProfile() {
                 </div>
                 <div className="flex-1">
                   <p className="text-xs text-gray-500 uppercase tracking-wide">Number of Sessions</p>
-                  <p className="text-sm font-medium text-gray-900">{doctor.numb_session || 0}</p>
+                  <p className="text-sm font-medium text-gray-900">{reviewsCount}</p>
                 </div>
               </div>
 
@@ -387,7 +399,9 @@ export default function DoctorProfile() {
                 <div className="flex-1">
                   <p className="text-xs text-gray-500 uppercase tracking-wide">Average Rating</p>
                   <p className="text-sm font-medium text-gray-900">
-                    {doctor.avg_rating !== null ? doctor.avg_rating.toFixed(2) : 'N/A'}
+                    {doctor.average_rating !== null && doctor.average_rating !== undefined 
+                      ? doctor.average_rating.toFixed(2) 
+                      : 'N/A'}
                   </p>
                 </div>
               </div>
@@ -398,9 +412,10 @@ export default function DoctorProfile() {
                 </div>
                 <div className="flex-1">
                   <p className="text-xs text-gray-500 uppercase tracking-wide">Number of Reviews</p>
-                  <p className="text-sm font-medium text-gray-900">{doctor.number_review || 0}</p>
+                  <p className="text-sm font-medium text-gray-900">{reviewsCount}</p>
                 </div>
               </div>
+
             </div>
           </div>
 
@@ -418,30 +433,6 @@ export default function DoctorProfile() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <User className="w-4 h-4 text-gray-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">Profile Image URL</p>
-                    <p className="text-sm font-medium text-gray-900 break-all">
-                      {doctor.profile_img_url || 'N/A'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <User className="w-4 h-4 text-gray-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">FCM Token</p>
-                    <p className="text-sm font-medium text-gray-900 break-all">
-                      {doctor.fcm_token || 'N/A'}
-                    </p>
-                  </div>
-                </div>
-
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                     <Calendar className="w-4 h-4 text-gray-600" />
