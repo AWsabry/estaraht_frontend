@@ -211,6 +211,22 @@ export const api = {
     getStats: () => apiFetch('/bookings/stats'),
   },
 
+  // Availabilities
+  availabilities: {
+    getAll: () => apiFetch('/availabilities'),
+    getByDoctor: (doctorId: string) => apiFetch(`/availabilities/doctor/${doctorId}`),
+    getById: (id: string) => apiFetch(`/availabilities/${id}`),
+    create: (data: Partial<Availability>) => apiFetch('/availabilities', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+    update: (id: string, data: Partial<Availability>) => apiFetch(`/availabilities/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    delete: (id: string) => apiFetch(`/availabilities/${id}`, { method: 'DELETE' }),
+  },
+
   // Reviews
   reviews: {
     getAll: () => apiFetch('/reviews'),
@@ -391,6 +407,15 @@ export type Bookings = {
     phone: string | null;
     profile_img_url: string | null;
   };
+};
+
+export type Availability = {
+  id: string;
+  doctor_id: string;
+  day_number: number;
+  time_slots: string[];
+  is_available?: boolean;
+  created_at?: string;
 };
 
 export type Review = {

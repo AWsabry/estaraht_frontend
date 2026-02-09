@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
-import { api, type Doctor, type Bookings } from '../lib/api';
+import { api, type Doctor, type Bookings, type Availability } from '../lib/api';
 import { 
   Star, DollarSign, Users, Calendar, Clock, Mail, Phone, User, Briefcase, 
   ArrowLeft, CheckCircle, XCircle, AlertCircle, Search
@@ -12,6 +12,7 @@ export default function DoctorProfile() {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [appointments, setAppointments] = useState<Bookings[]>([]);
   const [doctorReviews, setDoctorReviews] = useState<any[]>([]);
+  const [availabilities, setAvailabilities] = useState<Availability[]>([]);
   const [loading, setLoading] = useState(true);
   const [appointmentsLoading, setAppointmentsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,6 +33,7 @@ export default function DoctorProfile() {
       fetchDoctorDetails();
       fetchDoctorAppointments();
       fetchDoctorReviews();
+      fetchDoctorAvailabilities();
     }
   }, [id]);
 
@@ -66,6 +68,25 @@ export default function DoctorProfile() {
     } catch (error) {
       console.error('Error fetching doctor reviews:', error);
     }
+  };
+
+  const fetchDoctorAvailabilities = async () => {
+    try {
+      const response: any = await api.availabilities.getByDoctor(id!);
+      setAvailabilities(response.data || []);
+    } catch (error) {
+      console.error('Error fetching doctor availabilities:', error);
+    }
+  };
+
+  const dayNames: Record<number, string> = {
+    1: 'Monday',
+    2: 'Tuesday',
+    3: 'Wednesday',
+    4: 'Thursday',
+    5: 'Friday',
+    6: 'Saturday',
+    7: 'Sunday',
   };
 
   const handleUpdateApprovalStatus = async () => {
@@ -449,6 +470,55 @@ export default function DoctorProfile() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Availability */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+            Availability
+          </h3>
+          {availabilities.length === 0 ? (
+            <p className="text-sm text-gray-500">No availability set.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Day</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Time slots</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Available</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {availabilities.map((a) => (
+                    <tr key={a.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 font-medium text-gray-900">
+                        {dayNames[a.day_number] ?? `Day ${a.day_number}`}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {Array.isArray(a.time_slots) && a.time_slots.length > 0
+                          ? a.time_slots.join(', ')
+                          : '—'}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full ${
+                            a.is_available !== false ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                          }`}
+                        >
+                          {a.is_available !== false ? (
+                            <><CheckCircle className="w-3 h-3" /> Yes</>
+                          ) : (
+                            <><XCircle className="w-3 h-3" /> No</>
+                          )}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Appointments Section */}
