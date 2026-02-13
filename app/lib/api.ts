@@ -325,7 +325,7 @@ export type PaymentPlan = {
   description_ar?: string | null;
   description_fr?: string | null;
   price: number;
-  payment_currency?: string | null;
+  currency?: string | null;
   sessions: number;
   is_first_time_only?: boolean;
   is_active?: boolean;

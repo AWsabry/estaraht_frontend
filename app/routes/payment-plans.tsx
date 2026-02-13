@@ -20,7 +20,7 @@ export default function PaymentPlans() {
     description_ar: '',
     description_fr: '',
     price: '',
-    payment_currency: 'USD',
+    currency: 'USD',
     sessions: '',
     is_first_time_only: false,
     is_active: true,
@@ -77,7 +77,7 @@ export default function PaymentPlans() {
         description_ar: formData.description_ar || null,
         description_fr: formData.description_fr || null,
         price: parseFloat(formData.price) || 0,
-        payment_currency: formData.payment_currency || 'USD',
+        currency: formData.currency || 'USD',
         sessions: parseInt(formData.sessions, 10) || 0,
         is_first_time_only: formData.is_first_time_only,
         is_active: formData.is_active,
@@ -92,7 +92,7 @@ export default function PaymentPlans() {
         description_ar: '',
         description_fr: '',
         price: '',
-        payment_currency: 'USD',
+        currency: 'USD',
         sessions: '',
         is_first_time_only: false,
         is_active: true,
@@ -217,14 +217,14 @@ export default function PaymentPlans() {
                             </div>
                           </td>
                           <td className="px-6 py-4 text-gray-900">
-                            {plan.payment_currency === 'MRU' ? (
+                            {plan.currency === 'MRU' ? (
                               `${Number(plan.price).toFixed(0)} MRU`
                             ) : (
                               `${Number(plan.price).toFixed(2)}`
                             )}
                           </td>
                           <td className="px-6 py-4 text-gray-900">
-                            {plan.payment_currency || 'USD'}
+                            {plan.currency || 'USD'}
                           </td>
                           <td className="px-6 py-4 text-gray-900">
                             {plan.sessions}
@@ -360,8 +360,8 @@ export default function PaymentPlans() {
                         Currency
                       </label>
                       <select
-                        value={formData.payment_currency}
-                        onChange={(e) => setFormData({ ...formData, payment_currency: e.target.value })}
+                        value={formData.currency}
+                        onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#204FCF]"
                       >
                         <option value="USD">USD</option>

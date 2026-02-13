@@ -263,9 +263,9 @@ export default function Patients() {
                           >
                             <Eye className="w-5 h-5" />
                           </Link>
-                          <button className="text-[#204FCF] hover:text-[#1a3fa6]" title="Edit">
+                          {/* <button className="text-[#204FCF] hover:text-[#1a3fa6]" title="Edit">
                             <Edit className="w-5 h-5" />
-                          </button>
+                          </button> */}
                           <button
                             onClick={() => handleDelete(patient.id)}
                             className="text-red-600 hover:text-red-900"

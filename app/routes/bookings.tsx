@@ -152,13 +152,13 @@ export default function Appointments() {
             <h1 className="text-3xl font-bold text-gray-900">{t('bookings.title')}</h1>
             <p className="text-gray-600 mt-1">{t('bookings.subtitle')}</p>
           </div>
-          <button
+          {/* <button
             onClick={() => setShowCreateModal(true)}
             className={`flex items-center gap-2 bg-[#204FCF] text-white px-4 py-2 rounded-lg hover:bg-[#1a3fa6] transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
           >
             <Plus className="w-5 h-5" />
             {t('bookings.bookAppointment')}
-          </button>
+          </button> */}
         </div>
 
         {/* Stats */}

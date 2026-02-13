@@ -60,6 +60,14 @@ export default function Coupons() {
     setSubmitting(true);
 
     try {
+      // Validate percentage is between 0-100
+      const percentageValue = parseFloat(formData.coupon_value);
+      if (isNaN(percentageValue) || percentageValue < 0 || percentageValue > 100) {
+        setError('Discount percentage must be between 0 and 100');
+        setSubmitting(false);
+        return;
+      }
+
       const couponData = {
         coupon_code: formData.coupon_code,
         coupon_value: formData.coupon_value || null,
@@ -209,9 +217,7 @@ export default function Coupons() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('coupons.table.validUntil')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {t('coupons.table.usage')}
-                  </th>
+         
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {t('coupons.table.status')}
                   </th>
@@ -249,7 +255,7 @@ export default function Coupons() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
-                            {coupon.coupon_value || t('users.notAvailable')}
+                            {coupon.coupon_value ? `${coupon.coupon_value}%` : t('users.notAvailable')}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -263,13 +269,7 @@ export default function Coupons() {
                             {new Date(coupon.valid_until).toLocaleDateString()}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {coupon.one_use
-                              ? t('coupons.usage.oneTime')
-                              : `${coupon.number_of_uses} ${t('coupons.usage.uses')}`}
-                          </div>
-                        </td>
+                        
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full w-fit ${
@@ -300,9 +300,9 @@ export default function Coupons() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex gap-2">
-                            <button className="text-[#204FCF] hover:text-[#1a3fa6]" title={t('common.edit')}>
+                            {/* <button className="text-[#204FCF] hover:text-[#1a3fa6]" title={t('common.edit')}>
                               <Edit className="w-5 h-5" />
-                            </button>
+                            </button> */}
                             <button
                               onClick={() => handleDelete(coupon.id)}
                               className="text-red-600 hover:text-red-900"
@@ -371,19 +371,33 @@ export default function Coupons() {
                   />
                 </div>
 
-                {/* Coupon Value */}
+                {/* Coupon Value - Percentage Only */}
                 <div>
                   <label htmlFor="coupon_value" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('coupons.form.value')}
+                    {t('coupons.form.value')} (Percentage) *
                   </label>
-                  <input
-                    type="text"
-                    id="coupon_value"
-                    value={formData.coupon_value}
-                    onChange={(e) => setFormData({ ...formData, coupon_value: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#204FCF] focus:border-[#204FCF]"
-                    placeholder={t('coupons.form.valuePlaceholder')}
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      id="coupon_value"
+                      required
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      value={formData.coupon_value}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Ensure value is between 0-100
+                        if (value === '' || (parseFloat(value) >= 0 && parseFloat(value) <= 100)) {
+                          setFormData({ ...formData, coupon_value: value });
+                        }
+                      }}
+                      className="w-full px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#204FCF] focus:border-[#204FCF]"
+                      placeholder="0-100"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Enter discount percentage (0-100)</p>
                 </div>
 
                 {/* Valid Until */}
@@ -404,18 +418,18 @@ export default function Coupons() {
 
                 {/* For User */}
                 <div>
-                  <label htmlFor="for_user" className="block text-sm font-medium text-gray-700 mb-2">
+                  {/* <label htmlFor="for_user" className="block text-sm font-medium text-gray-700 mb-2">
                     {t('coupons.form.forUser')}
-                  </label>
-                  <input
+                  </label> */}
+                  {/* <input
                     type="text"
                     id="for_user"
                     value={formData.for_user}
                     onChange={(e) => setFormData({ ...formData, for_user: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#204FCF] focus:border-[#204FCF]"
                     placeholder={t('coupons.form.forUserPlaceholder')}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">{t('coupons.form.forUserHelp')}</p>
+                  /> */}
+                  {/* <p className="text-xs text-gray-500 mt-1">{t('coupons.form.forUserHelp')}</p> */}
                 </div>
               </div>
 
@@ -434,7 +448,7 @@ export default function Coupons() {
               </div>
 
               {/* Number of Uses */}
-              {!formData.one_use && (
+              {/* {!formData.one_use && (
                 <div>
                   <label htmlFor="number_of_uses" className="block text-sm font-medium text-gray-700 mb-2">
                     {t('coupons.form.numberOfUses')}
@@ -448,7 +462,7 @@ export default function Coupons() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#204FCF] focus:border-[#204FCF]"
                   />
                 </div>
-              )}
+              )} */}
 
               {/* Form Actions */}
               <div className="flex items-center justify-end gap-4 pt-4 border-t">
